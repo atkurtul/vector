@@ -137,6 +137,12 @@ struct Seq0<-1, t...> {
     ((Seq<a>::template write<n, t>(re, m[t])), ...);
     return re;
   }
+
+  static constexpr mat<n, n> fill(f32 x) {
+    mat<n, n> m = {};
+    ((m[t][t] = x), ...);
+    return m;
+  }
 };
 
 template <int... n>
@@ -153,6 +159,11 @@ struct swizz {
   }
 
   swizz& operator=(swizz v) requires(is_unique_v<n...>) {
+    return Seq<ns>::assign(*this, v), *this;
+  }
+
+  template <veccy<ns> V>
+  swizz& operator=(V v) requires(is_unique_v<n...>) {
     return Seq<ns>::assign(*this, v), *this;
   }
 
@@ -398,6 +409,11 @@ struct mat<r, 4> {
   vec<r>& operator[](size_t i) { return dat[i]; };
   vec<r> operator[](size_t i) const { return dat[i]; };
 };
+
+template <int n>
+mat<n, n> identity(f32 x) {
+  return Seq<n>::fill(x);
+}
 
 template <int r, int n, veccy<n> V>
 vec<r> operator*(mat<r, n> m, V v) {
